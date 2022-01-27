@@ -1,10 +1,5 @@
 package ru.netology;
 
-<<<<<<< HEAD
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-=======
->>>>>>> c35b668635ec5e6c88bb0974069c3bae2b90f87d
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
