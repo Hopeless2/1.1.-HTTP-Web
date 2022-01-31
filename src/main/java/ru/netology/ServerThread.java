@@ -7,18 +7,24 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 public class ServerThread implements Runnable {
     private final Socket socket;
-    private final Server server;
+    private final Map<String, Handler> handlersGet;
+    private final Map<String, Handler> handlersPost;
+    public static final String GET = "GET";
+    public static final String POST = "POST";
+    final List<String> allowedMethods = List.of(GET, POST);
     private BufferedReader in = null;
     private BufferedOutputStream out = null;
     private final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
 
 
-    public ServerThread(Socket socket, Server server) {
+    public ServerThread(Socket socket, Map<String, Handler> handlersGet, Map<String, Handler> handlersPOST) {
         this.socket = socket;
-        this.server = server;
+        this.handlersGet = handlersGet;
+        this.handlersPost = handlersPOST;
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new BufferedOutputStream(socket.getOutputStream());
@@ -52,11 +58,19 @@ public class ServerThread implements Runnable {
                     continue;
                 }
                 Request request = new Request(parts[0], path, parts[2]);
-                server.handle(request, out);
+                handle(request, out);
 
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    public void handle(Request request, BufferedOutputStream responseStream) throws IOException {
+        if (request.getRequestMethod().equals(allowedMethods.get(0))) {
+            handlersGet.get(request.getPath()).handle(request, responseStream);
+        } else if (request.getRequestMethod().equals(allowedMethods.get(1))) {
+            handlersPost.get(request.getPath()).handle(request, responseStream);
         }
     }
 }

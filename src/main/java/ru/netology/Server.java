@@ -1,6 +1,5 @@
 package ru.netology;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
@@ -22,7 +21,7 @@ public class Server extends Thread {
         try (final var serverSocket = new ServerSocket(PORT)) {
             ExecutorService service = Executors.newFixedThreadPool(64);
             while (true) {
-                service.submit(new ServerThread(serverSocket.accept(), this));
+                service.submit(new ServerThread(serverSocket.accept(), handlersGet, handlersPost));
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -34,14 +33,6 @@ public class Server extends Thread {
             handlersGet.put(path, handler);
         } else if (method.equals(allowedMethods.get(1))) {
             handlersPost.put(path, handler);
-        }
-    }
-
-    public void handle(Request request, BufferedOutputStream responseStream) throws IOException {
-        if (request.getRequestMethod().equals(allowedMethods.get(0))) {
-            handlersGet.get(request.getPath()).handle(request, responseStream);
-        } else if (request.getRequestMethod().equals(allowedMethods.get(1))) {
-            handlersPost.get(request.getPath()).handle(request, responseStream);
         }
     }
 
