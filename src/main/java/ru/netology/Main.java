@@ -1,6 +1,5 @@
 package ru.netology;
 
-import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -11,7 +10,6 @@ public class Main {
         final var server = new Server();
 
         Handler standardCase = (request, responseStream) -> {
-            HttpClient client = HttpClient.newBuilder().build();
             final var filePath = Path.of(".", "public", request.getPath());
             final var mimeType = Files.probeContentType(filePath);
             final var length = Files.size(filePath);

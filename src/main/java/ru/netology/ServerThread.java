@@ -57,7 +57,7 @@ public class ServerThread implements Runnable {
                     out.flush();
                     continue;
                 }
-                Request request = new Request(parts[0], path, parts[2]);
+                Request request = new Request(parts[0], parts[1], parts[2]);
                 handle(request, out);
 
             } catch (IOException ex) {
